@@ -14,16 +14,313 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attempts: {
+        Row: {
+          created_at: string
+          end_time: string
+          id: string
+          max_score: number
+          score: number
+          start_time: string
+          status: Database["public"]["Enums"]["attempt_status"]
+          student_id: string
+          submitted_at: string | null
+          submitted_reason:
+            | Database["public"]["Enums"]["submitted_reason"]
+            | null
+          test_id: string
+          warning_count: number
+        }
+        Insert: {
+          created_at?: string
+          end_time: string
+          id?: string
+          max_score?: number
+          score?: number
+          start_time?: string
+          status?: Database["public"]["Enums"]["attempt_status"]
+          student_id: string
+          submitted_at?: string | null
+          submitted_reason?:
+            | Database["public"]["Enums"]["submitted_reason"]
+            | null
+          test_id: string
+          warning_count?: number
+        }
+        Update: {
+          created_at?: string
+          end_time?: string
+          id?: string
+          max_score?: number
+          score?: number
+          start_time?: string
+          status?: Database["public"]["Enums"]["attempt_status"]
+          student_id?: string
+          submitted_at?: string | null
+          submitted_reason?:
+            | Database["public"]["Enums"]["submitted_reason"]
+            | null
+          test_id?: string
+          warning_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attempts_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attempts_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      options: {
+        Row: {
+          created_at: string
+          id: string
+          is_correct: boolean
+          position: number
+          question_id: string
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          position?: number
+          question_id: string
+          text: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          position?: number
+          question_id?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string
+          id: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          created_at: string
+          id: string
+          points: number
+          position: number
+          section_id: string
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          points?: number
+          position?: number
+          section_id: string
+          text: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          points?: number
+          position?: number
+          section_id?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      responses: {
+        Row: {
+          attempt_id: string
+          id: string
+          question_id: string
+          selected_option_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          attempt_id: string
+          id?: string
+          question_id: string
+          selected_option_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attempt_id?: string
+          id?: string
+          question_id?: string
+          selected_option_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "responses_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "responses_selected_option_id_fkey"
+            columns: ["selected_option_id"]
+            isOneToOne: false
+            referencedRelation: "options"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sections: {
+        Row: {
+          created_at: string
+          id: string
+          position: number
+          test_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          position?: number
+          test_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          position?: number
+          test_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sections_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tests: {
+        Row: {
+          created_at: string
+          description: string
+          display_mode: Database["public"]["Enums"]["display_mode"]
+          duration_minutes: number
+          id: string
+          instructor_id: string
+          results_released: boolean
+          shuffle_questions: boolean
+          status: Database["public"]["Enums"]["test_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          display_mode?: Database["public"]["Enums"]["display_mode"]
+          duration_minutes?: number
+          id?: string
+          instructor_id: string
+          results_released?: boolean
+          shuffle_questions?: boolean
+          status?: Database["public"]["Enums"]["test_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          display_mode?: Database["public"]["Enums"]["display_mode"]
+          duration_minutes?: number
+          id?: string
+          instructor_id?: string
+          results_released?: boolean
+          shuffle_questions?: boolean
+          status?: Database["public"]["Enums"]["test_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tests_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["user_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      attempt_status: "in_progress" | "submitted"
+      display_mode: "one" | "all"
+      submitted_reason: "normal" | "time_over" | "violations"
+      test_status: "draft" | "published" | "closed"
+      user_role: "instructor" | "student"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +447,12 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      attempt_status: ["in_progress", "submitted"],
+      display_mode: ["one", "all"],
+      submitted_reason: ["normal", "time_over", "violations"],
+      test_status: ["draft", "published", "closed"],
+      user_role: ["instructor", "student"],
+    },
   },
 } as const
