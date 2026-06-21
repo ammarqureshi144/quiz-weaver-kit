@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedStudentDashboardRouteImport } from './routes/_authenticated/student/dashboard'
 import { Route as AuthenticatedInstructorDashboardRouteImport } from './routes/_authenticated/instructor/dashboard'
 import { Route as AuthenticatedInstructorTestsTestIdRouteImport } from './routes/_authenticated/instructor/tests.$testId'
+import { Route as AuthenticatedStudentTestsTestIdTakeRouteImport } from './routes/_authenticated/student/tests.$testId.take'
 import { Route as AuthenticatedStudentTestsTestIdSubmittedRouteImport } from './routes/_authenticated/student/tests.$testId.submitted'
 import { Route as AuthenticatedStudentTestsTestIdStartRouteImport } from './routes/_authenticated/student/tests.$testId.start'
 import { Route as AuthenticatedInstructorTestsTestIdResultsRouteImport } from './routes/_authenticated/instructor/tests.$testId.results'
@@ -51,6 +52,12 @@ const AuthenticatedInstructorTestsTestIdRoute =
     path: '/instructor/tests/$testId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedStudentTestsTestIdTakeRoute =
+  AuthenticatedStudentTestsTestIdTakeRouteImport.update({
+    id: '/student/tests/$testId/take',
+    path: '/student/tests/$testId/take',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedStudentTestsTestIdSubmittedRoute =
   AuthenticatedStudentTestsTestIdSubmittedRouteImport.update({
     id: '/student/tests/$testId/submitted',
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/instructor/tests/$testId/results': typeof AuthenticatedInstructorTestsTestIdResultsRoute
   '/student/tests/$testId/start': typeof AuthenticatedStudentTestsTestIdStartRoute
   '/student/tests/$testId/submitted': typeof AuthenticatedStudentTestsTestIdSubmittedRoute
+  '/student/tests/$testId/take': typeof AuthenticatedStudentTestsTestIdTakeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -89,6 +97,7 @@ export interface FileRoutesByTo {
   '/instructor/tests/$testId/results': typeof AuthenticatedInstructorTestsTestIdResultsRoute
   '/student/tests/$testId/start': typeof AuthenticatedStudentTestsTestIdStartRoute
   '/student/tests/$testId/submitted': typeof AuthenticatedStudentTestsTestIdSubmittedRoute
+  '/student/tests/$testId/take': typeof AuthenticatedStudentTestsTestIdTakeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -101,6 +110,7 @@ export interface FileRoutesById {
   '/_authenticated/instructor/tests/$testId/results': typeof AuthenticatedInstructorTestsTestIdResultsRoute
   '/_authenticated/student/tests/$testId/start': typeof AuthenticatedStudentTestsTestIdStartRoute
   '/_authenticated/student/tests/$testId/submitted': typeof AuthenticatedStudentTestsTestIdSubmittedRoute
+  '/_authenticated/student/tests/$testId/take': typeof AuthenticatedStudentTestsTestIdTakeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -113,6 +123,7 @@ export interface FileRouteTypes {
     | '/instructor/tests/$testId/results'
     | '/student/tests/$testId/start'
     | '/student/tests/$testId/submitted'
+    | '/student/tests/$testId/take'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -123,6 +134,7 @@ export interface FileRouteTypes {
     | '/instructor/tests/$testId/results'
     | '/student/tests/$testId/start'
     | '/student/tests/$testId/submitted'
+    | '/student/tests/$testId/take'
   id:
     | '__root__'
     | '/'
@@ -134,6 +146,7 @@ export interface FileRouteTypes {
     | '/_authenticated/instructor/tests/$testId/results'
     | '/_authenticated/student/tests/$testId/start'
     | '/_authenticated/student/tests/$testId/submitted'
+    | '/_authenticated/student/tests/$testId/take'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -186,6 +199,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInstructorTestsTestIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/student/tests/$testId/take': {
+      id: '/_authenticated/student/tests/$testId/take'
+      path: '/student/tests/$testId/take'
+      fullPath: '/student/tests/$testId/take'
+      preLoaderRoute: typeof AuthenticatedStudentTestsTestIdTakeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/student/tests/$testId/submitted': {
       id: '/_authenticated/student/tests/$testId/submitted'
       path: '/student/tests/$testId/submitted'
@@ -231,6 +251,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInstructorTestsTestIdRoute: typeof AuthenticatedInstructorTestsTestIdRouteWithChildren
   AuthenticatedStudentTestsTestIdStartRoute: typeof AuthenticatedStudentTestsTestIdStartRoute
   AuthenticatedStudentTestsTestIdSubmittedRoute: typeof AuthenticatedStudentTestsTestIdSubmittedRoute
+  AuthenticatedStudentTestsTestIdTakeRoute: typeof AuthenticatedStudentTestsTestIdTakeRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -242,6 +263,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedStudentTestsTestIdStartRoute,
   AuthenticatedStudentTestsTestIdSubmittedRoute:
     AuthenticatedStudentTestsTestIdSubmittedRoute,
+  AuthenticatedStudentTestsTestIdTakeRoute:
+    AuthenticatedStudentTestsTestIdTakeRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
