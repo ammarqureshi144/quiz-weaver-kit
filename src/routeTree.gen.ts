@@ -9,38 +9,116 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedInstructorDashboardRouteImport } from './routes/_authenticated/instructor/dashboard'
+import { Route as AuthenticatedInstructorTestsTestIdRouteImport } from './routes/_authenticated/instructor/tests.$testId'
+import { Route as AuthenticatedInstructorTestsTestIdResultsRouteImport } from './routes/_authenticated/instructor/tests.$testId.results'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedInstructorDashboardRoute =
+  AuthenticatedInstructorDashboardRouteImport.update({
+    id: '/instructor/dashboard',
+    path: '/instructor/dashboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedInstructorTestsTestIdRoute =
+  AuthenticatedInstructorTestsTestIdRouteImport.update({
+    id: '/instructor/tests/$testId',
+    path: '/instructor/tests/$testId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedInstructorTestsTestIdResultsRoute =
+  AuthenticatedInstructorTestsTestIdResultsRouteImport.update({
+    id: '/results',
+    path: '/results',
+    getParentRoute: () => AuthenticatedInstructorTestsTestIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/instructor/dashboard': typeof AuthenticatedInstructorDashboardRoute
+  '/instructor/tests/$testId': typeof AuthenticatedInstructorTestsTestIdRouteWithChildren
+  '/instructor/tests/$testId/results': typeof AuthenticatedInstructorTestsTestIdResultsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/instructor/dashboard': typeof AuthenticatedInstructorDashboardRoute
+  '/instructor/tests/$testId': typeof AuthenticatedInstructorTestsTestIdRouteWithChildren
+  '/instructor/tests/$testId/results': typeof AuthenticatedInstructorTestsTestIdResultsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/instructor/dashboard': typeof AuthenticatedInstructorDashboardRoute
+  '/_authenticated/instructor/tests/$testId': typeof AuthenticatedInstructorTestsTestIdRouteWithChildren
+  '/_authenticated/instructor/tests/$testId/results': typeof AuthenticatedInstructorTestsTestIdResultsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/instructor/dashboard'
+    | '/instructor/tests/$testId'
+    | '/instructor/tests/$testId/results'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/instructor/dashboard'
+    | '/instructor/tests/$testId'
+    | '/instructor/tests/$testId/results'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/instructor/dashboard'
+    | '/_authenticated/instructor/tests/$testId'
+    | '/_authenticated/instructor/tests/$testId/results'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +126,63 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/instructor/dashboard': {
+      id: '/_authenticated/instructor/dashboard'
+      path: '/instructor/dashboard'
+      fullPath: '/instructor/dashboard'
+      preLoaderRoute: typeof AuthenticatedInstructorDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/instructor/tests/$testId': {
+      id: '/_authenticated/instructor/tests/$testId'
+      path: '/instructor/tests/$testId'
+      fullPath: '/instructor/tests/$testId'
+      preLoaderRoute: typeof AuthenticatedInstructorTestsTestIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/instructor/tests/$testId/results': {
+      id: '/_authenticated/instructor/tests/$testId/results'
+      path: '/results'
+      fullPath: '/instructor/tests/$testId/results'
+      preLoaderRoute: typeof AuthenticatedInstructorTestsTestIdResultsRouteImport
+      parentRoute: typeof AuthenticatedInstructorTestsTestIdRoute
+    }
   }
 }
 
+interface AuthenticatedInstructorTestsTestIdRouteChildren {
+  AuthenticatedInstructorTestsTestIdResultsRoute: typeof AuthenticatedInstructorTestsTestIdResultsRoute
+}
+
+const AuthenticatedInstructorTestsTestIdRouteChildren: AuthenticatedInstructorTestsTestIdRouteChildren =
+  {
+    AuthenticatedInstructorTestsTestIdResultsRoute:
+      AuthenticatedInstructorTestsTestIdResultsRoute,
+  }
+
+const AuthenticatedInstructorTestsTestIdRouteWithChildren =
+  AuthenticatedInstructorTestsTestIdRoute._addFileChildren(
+    AuthenticatedInstructorTestsTestIdRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedInstructorDashboardRoute: typeof AuthenticatedInstructorDashboardRoute
+  AuthenticatedInstructorTestsTestIdRoute: typeof AuthenticatedInstructorTestsTestIdRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedInstructorDashboardRoute: AuthenticatedInstructorDashboardRoute,
+  AuthenticatedInstructorTestsTestIdRoute:
+    AuthenticatedInstructorTestsTestIdRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
