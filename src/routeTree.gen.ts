@@ -12,8 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedStudentDashboardRouteImport } from './routes/_authenticated/student/dashboard'
 import { Route as AuthenticatedInstructorDashboardRouteImport } from './routes/_authenticated/instructor/dashboard'
 import { Route as AuthenticatedInstructorTestsTestIdRouteImport } from './routes/_authenticated/instructor/tests.$testId'
+import { Route as AuthenticatedStudentTestsTestIdSubmittedRouteImport } from './routes/_authenticated/student/tests.$testId.submitted'
+import { Route as AuthenticatedStudentTestsTestIdStartRouteImport } from './routes/_authenticated/student/tests.$testId.start'
 import { Route as AuthenticatedInstructorTestsTestIdResultsRouteImport } from './routes/_authenticated/instructor/tests.$testId.results'
 
 const AuthRoute = AuthRouteImport.update({
@@ -30,6 +33,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedStudentDashboardRoute =
+  AuthenticatedStudentDashboardRouteImport.update({
+    id: '/student/dashboard',
+    path: '/student/dashboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedInstructorDashboardRoute =
   AuthenticatedInstructorDashboardRouteImport.update({
     id: '/instructor/dashboard',
@@ -40,6 +49,18 @@ const AuthenticatedInstructorTestsTestIdRoute =
   AuthenticatedInstructorTestsTestIdRouteImport.update({
     id: '/instructor/tests/$testId',
     path: '/instructor/tests/$testId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStudentTestsTestIdSubmittedRoute =
+  AuthenticatedStudentTestsTestIdSubmittedRouteImport.update({
+    id: '/student/tests/$testId/submitted',
+    path: '/student/tests/$testId/submitted',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStudentTestsTestIdStartRoute =
+  AuthenticatedStudentTestsTestIdStartRouteImport.update({
+    id: '/student/tests/$testId/start',
+    path: '/student/tests/$testId/start',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedInstructorTestsTestIdResultsRoute =
@@ -53,15 +74,21 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/instructor/dashboard': typeof AuthenticatedInstructorDashboardRoute
+  '/student/dashboard': typeof AuthenticatedStudentDashboardRoute
   '/instructor/tests/$testId': typeof AuthenticatedInstructorTestsTestIdRouteWithChildren
   '/instructor/tests/$testId/results': typeof AuthenticatedInstructorTestsTestIdResultsRoute
+  '/student/tests/$testId/start': typeof AuthenticatedStudentTestsTestIdStartRoute
+  '/student/tests/$testId/submitted': typeof AuthenticatedStudentTestsTestIdSubmittedRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/instructor/dashboard': typeof AuthenticatedInstructorDashboardRoute
+  '/student/dashboard': typeof AuthenticatedStudentDashboardRoute
   '/instructor/tests/$testId': typeof AuthenticatedInstructorTestsTestIdRouteWithChildren
   '/instructor/tests/$testId/results': typeof AuthenticatedInstructorTestsTestIdResultsRoute
+  '/student/tests/$testId/start': typeof AuthenticatedStudentTestsTestIdStartRoute
+  '/student/tests/$testId/submitted': typeof AuthenticatedStudentTestsTestIdSubmittedRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -69,8 +96,11 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/instructor/dashboard': typeof AuthenticatedInstructorDashboardRoute
+  '/_authenticated/student/dashboard': typeof AuthenticatedStudentDashboardRoute
   '/_authenticated/instructor/tests/$testId': typeof AuthenticatedInstructorTestsTestIdRouteWithChildren
   '/_authenticated/instructor/tests/$testId/results': typeof AuthenticatedInstructorTestsTestIdResultsRoute
+  '/_authenticated/student/tests/$testId/start': typeof AuthenticatedStudentTestsTestIdStartRoute
+  '/_authenticated/student/tests/$testId/submitted': typeof AuthenticatedStudentTestsTestIdSubmittedRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -78,23 +108,32 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/instructor/dashboard'
+    | '/student/dashboard'
     | '/instructor/tests/$testId'
     | '/instructor/tests/$testId/results'
+    | '/student/tests/$testId/start'
+    | '/student/tests/$testId/submitted'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/instructor/dashboard'
+    | '/student/dashboard'
     | '/instructor/tests/$testId'
     | '/instructor/tests/$testId/results'
+    | '/student/tests/$testId/start'
+    | '/student/tests/$testId/submitted'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/instructor/dashboard'
+    | '/_authenticated/student/dashboard'
     | '/_authenticated/instructor/tests/$testId'
     | '/_authenticated/instructor/tests/$testId/results'
+    | '/_authenticated/student/tests/$testId/start'
+    | '/_authenticated/student/tests/$testId/submitted'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -126,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/student/dashboard': {
+      id: '/_authenticated/student/dashboard'
+      path: '/student/dashboard'
+      fullPath: '/student/dashboard'
+      preLoaderRoute: typeof AuthenticatedStudentDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/instructor/dashboard': {
       id: '/_authenticated/instructor/dashboard'
       path: '/instructor/dashboard'
@@ -138,6 +184,20 @@ declare module '@tanstack/react-router' {
       path: '/instructor/tests/$testId'
       fullPath: '/instructor/tests/$testId'
       preLoaderRoute: typeof AuthenticatedInstructorTestsTestIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/student/tests/$testId/submitted': {
+      id: '/_authenticated/student/tests/$testId/submitted'
+      path: '/student/tests/$testId/submitted'
+      fullPath: '/student/tests/$testId/submitted'
+      preLoaderRoute: typeof AuthenticatedStudentTestsTestIdSubmittedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/student/tests/$testId/start': {
+      id: '/_authenticated/student/tests/$testId/start'
+      path: '/student/tests/$testId/start'
+      fullPath: '/student/tests/$testId/start'
+      preLoaderRoute: typeof AuthenticatedStudentTestsTestIdStartRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/instructor/tests/$testId/results': {
@@ -167,13 +227,21 @@ const AuthenticatedInstructorTestsTestIdRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedInstructorDashboardRoute: typeof AuthenticatedInstructorDashboardRoute
+  AuthenticatedStudentDashboardRoute: typeof AuthenticatedStudentDashboardRoute
   AuthenticatedInstructorTestsTestIdRoute: typeof AuthenticatedInstructorTestsTestIdRouteWithChildren
+  AuthenticatedStudentTestsTestIdStartRoute: typeof AuthenticatedStudentTestsTestIdStartRoute
+  AuthenticatedStudentTestsTestIdSubmittedRoute: typeof AuthenticatedStudentTestsTestIdSubmittedRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedInstructorDashboardRoute: AuthenticatedInstructorDashboardRoute,
+  AuthenticatedStudentDashboardRoute: AuthenticatedStudentDashboardRoute,
   AuthenticatedInstructorTestsTestIdRoute:
     AuthenticatedInstructorTestsTestIdRouteWithChildren,
+  AuthenticatedStudentTestsTestIdStartRoute:
+    AuthenticatedStudentTestsTestIdStartRoute,
+  AuthenticatedStudentTestsTestIdSubmittedRoute:
+    AuthenticatedStudentTestsTestIdSubmittedRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
