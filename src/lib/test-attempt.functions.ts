@@ -83,15 +83,11 @@ export const startOrResumeAttempt = createServerFn({ method: "POST" })
           .in("section_id", sectionIds)
           .order("position")
       : { data: [] as any[] };
-    const questionIds = (questions ?? []).map((q) => q.id);
-    // Do NOT select is_correct — student must not see correct answers.
-    const { data: options } = questionIds.length
-      ? await supabase
-          .from("options")
-          .select("id, question_id, text, position")
-          .in("question_id", questionIds)
-          .order("position")
-      : { data: [] as any[] };
+    // Fetch options via security-definer RPC — students never have direct SELECT on options.
+    const { data: options, error: optErr } = await supabase.rpc("get_student_test_options", {
+      _test_id: data.testId,
+    });
+    if (optErr) throw optErr;
 
     return {
       attempt,
