@@ -83,15 +83,11 @@ export const startOrResumeAttempt = createServerFn({ method: "POST" })
           .in("section_id", sectionIds)
           .order("position")
       : { data: [] as any[] };
-    const questionIds = (questions ?? []).map((q) => q.id);
-    // Do NOT select is_correct — student must not see correct answers.
-    const { data: options } = questionIds.length
-      ? await supabase
-          .from("options")
-          .select("id, question_id, text, position")
-          .in("question_id", questionIds)
-          .order("position")
-      : { data: [] as any[] };
+    // Fetch options via security-definer RPC — students never have direct SELECT on options.
+    const { data: options, error: optErr } = await supabase.rpc("get_student_test_options", {
+      _test_id: data.testId,
+    });
+    if (optErr) throw optErr;
 
     return {
       attempt,
@@ -288,49 +284,32 @@ export const getStudentResult = createServerFn({ method: "POST" })
 
     const { data: attempt } = await supabase
       .from("attempts").select("*").eq("test_id", data.testId).eq("student_id", userId).maybeSingle();
-    if (!attempt) return { test, attempt: null, rank: null, breakdown: [], released: test.results_released };
+    if (!attempt) return { test, attempt: null, rank: null, total: null, breakdown: [], released: test.results_released };
 
     if (!test.results_released) {
-      return { test, attempt, rank: null, breakdown: [], released: false };
+      return { test, attempt, rank: null, total: null, breakdown: [], released: false };
     }
 
-    // Rank from student's own attempts row is not visible across students under RLS;
-    // expose only this student's rank vs their own attempt position is N/A. Skip rank.
-    const rank: number | null = null;
+    // Rank + total via security-definer RPC.
+    let rank: number | null = null;
+    let total: number | null = null;
+    const { data: rankRows } = await supabase.rpc("get_student_rank", { _attempt_id: attempt.id });
+    if (rankRows && rankRows.length > 0) {
+      rank = (rankRows[0] as any).rank ?? null;
+      total = (rankRows[0] as any).total ?? null;
+    }
 
-    const { data: sections } = await supabase
-      .from("sections").select("id, title, position").eq("test_id", data.testId).order("position");
-    const sectionIds = (sections ?? []).map((s) => s.id);
-    const { data: questions } = sectionIds.length
-      ? await supabase.from("questions").select("id, section_id, points").in("section_id", sectionIds)
-      : { data: [] as any[] };
-    const sectionByQ = new Map((questions ?? []).map((q) => [q.id, q.section_id] as const));
-    const pointsByQ = new Map((questions ?? []).map((q) => [q.id, q.points] as const));
-    const maxBySection = new Map<string, number>();
-    for (const q of questions ?? []) {
-      maxBySection.set(q.section_id, (maxBySection.get(q.section_id) ?? 0) + q.points);
-    }
-    const { data: responses } = await supabase
-      .from("responses").select("question_id, selected_option_id").eq("attempt_id", attempt.id);
-    const optIds = (responses ?? []).map((r) => r.selected_option_id).filter(Boolean) as string[];
-    const { data: opts } = optIds.length
-      ? await supabase.from("options").select("id, is_correct").in("id", optIds)
-      : { data: [] as any[] };
-    const correctById = new Map((opts ?? []).map((o) => [o.id, o.is_correct] as const));
-    const scoreBySection = new Map<string, number>();
-    for (const r of responses ?? []) {
-      if (!r.selected_option_id) continue;
-      if (!correctById.get(r.selected_option_id)) continue;
-      const sid = sectionByQ.get(r.question_id);
-      if (!sid) continue;
-      scoreBySection.set(sid, (scoreBySection.get(sid) ?? 0) + (pointsByQ.get(r.question_id) ?? 0));
-    }
-    const breakdown = (sections ?? []).map((s) => ({
-      sectionId: s.id,
-      title: s.title,
-      score: scoreBySection.get(s.id) ?? 0,
-      max: maxBySection.get(s.id) ?? 0,
+    // Section-wise breakdown via security-definer RPC (no direct is_correct read).
+    const { data: breakRows } = await supabase.rpc("get_student_section_breakdown", {
+      _attempt_id: attempt.id,
+    });
+    const breakdown = (breakRows ?? []).map((r: any) => ({
+      sectionId: r.section_id,
+      title: r.title,
+      score: Number(r.score ?? 0),
+      max: Number(r.max_score ?? 0),
     }));
 
-    return { test, attempt, rank, breakdown, released: true };
+    return { test, attempt, rank, total, breakdown, released: true };
   });
+

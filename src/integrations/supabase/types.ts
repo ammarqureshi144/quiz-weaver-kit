@@ -307,6 +307,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_student_rank: {
+        Args: { _attempt_id: string }
+        Returns: {
+          rank: number
+          total: number
+        }[]
+      }
+      get_student_section_breakdown: {
+        Args: { _attempt_id: string }
+        Returns: {
+          max_score: number
+          position: number
+          score: number
+          section_id: string
+          title: string
+        }[]
+      }
+      get_student_test_options: {
+        Args: { _test_id: string }
+        Returns: {
+          id: string
+          position: number
+          question_id: string
+          text: string
+        }[]
+      }
       grade_and_submit_attempt: {
         Args: {
           _attempt_id: string
