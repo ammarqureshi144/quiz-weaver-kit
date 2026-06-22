@@ -49,8 +49,22 @@ export const startOrResumeAttempt = createServerFn({ method: "POST" })
         })
         .select("*")
         .single();
-      if (createErr) throw createErr;
-      attempt = created;
+      if (createErr) {
+        // Race: another concurrent call created the attempt — fetch it.
+        if ((createErr as any).code === "23505") {
+          const { data: existing } = await supabaseAdmin
+            .from("attempts")
+            .select("*")
+            .eq("test_id", data.testId)
+            .eq("student_id", userId)
+            .single();
+          attempt = existing!;
+        } else {
+          throw createErr;
+        }
+      } else {
+        attempt = created;
+      }
     }
 
     if (attempt.status === "submitted") {
