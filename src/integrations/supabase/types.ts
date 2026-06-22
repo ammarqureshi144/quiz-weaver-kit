@@ -314,6 +314,16 @@ export type Database = {
           total: number
         }[]
       }
+      get_student_section_breakdown: {
+        Args: { _attempt_id: string }
+        Returns: {
+          max_score: number
+          position: number
+          score: number
+          section_id: string
+          title: string
+        }[]
+      }
       get_student_test_options: {
         Args: { _test_id: string }
         Returns: {
