@@ -307,6 +307,34 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      grade_and_submit_attempt: {
+        Args: {
+          _attempt_id: string
+          _reason: Database["public"]["Enums"]["submitted_reason"]
+        }
+        Returns: {
+          created_at: string
+          end_time: string
+          id: string
+          max_score: number
+          score: number
+          start_time: string
+          status: Database["public"]["Enums"]["attempt_status"]
+          student_id: string
+          submitted_at: string | null
+          submitted_reason:
+            | Database["public"]["Enums"]["submitted_reason"]
+            | null
+          test_id: string
+          warning_count: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "attempts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["user_role"]
