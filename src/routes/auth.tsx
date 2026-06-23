@@ -34,12 +34,12 @@ function AuthPage() {
   }, [loading, user, profile, navigate]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
-      <div className="w-full max-w-md">
+    <div className="flex min-h-screen items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md animate-fade-in">
         <Link to="/" className="mb-6 block text-center font-display text-2xl font-semibold tracking-tight">
           Examly
         </Link>
-        <Card>
+        <Card className="border-border/70 bg-card/90 shadow-lg backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="font-display">Welcome</CardTitle>
             <CardDescription>Sign in or create an account to continue.</CardDescription>
@@ -50,8 +50,8 @@ function AuthPage() {
                 <TabsTrigger value="signin">Sign in</TabsTrigger>
                 <TabsTrigger value="signup">Sign up</TabsTrigger>
               </TabsList>
-              <TabsContent value="signin" className="mt-6"><SignInForm /></TabsContent>
-              <TabsContent value="signup" className="mt-6"><SignUpForm /></TabsContent>
+              <TabsContent value="signin" className="mt-6 animate-fade-in"><SignInForm /></TabsContent>
+              <TabsContent value="signup" className="mt-6 animate-fade-in"><SignUpForm /></TabsContent>
             </Tabs>
           </CardContent>
         </Card>
